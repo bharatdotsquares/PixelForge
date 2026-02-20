@@ -1,36 +1,45 @@
-# PixelForge Studio – WebGL Magic Editor (Frontend)
+# PixelForge Studio – Production Frontend (React + Tailwind)
 
-Production-style React + Tailwind single-page editor shell designed for browser-only image editing workflows.
+A functional, frontend-only image editor architecture with class-based engine services and a Canva-style workspace.
 
-## Included modules
+## What is implemented
 
-- Canva-style layout: top nav, left tool rail, center workspace, right property panel, bottom layers
-- Magic Wand settings panel with threshold/blur/feather controls and conversion actions
-- GPU filter stack chips for real-time effects pipeline
-- Layer cards and selection visuals
-- Stitch module feature summary with IndexedDB-first workflow
+- **Class-based React app shell** with separated state + rendering.
+- **Magic Wand engine** (`MagicWandEngine`) flood-fill selection, threshold and feathering.
+- **Filter pipeline** (`FilterPipeline`) with stack controls and mask-aware processing.
+- **Layer system** (`LayerManager`) for DRY layer CRUD and opacity controls.
+- **Stitch module engine** (`StitchEngine`) for horizontal/vertical/smart merge logic.
+- **Collage module engine** (`CollageEngine`) with reusable grid generation.
+- **IndexedDB persistence** (`AssetStore`) for local mask/uploads.
+- **Dynamic library adapters** (`LibraryAdapters`) to warm up optional integrations:
+  - fabric / konva
+  - magic-wand-tool / image-js
+  - glfx / regl
+  - pica / interactjs
+  - face-api.js / @imgly/background-removal / tracking / jsfeat / gammacv
 
-## Stack
+## Architecture
 
-- React 18 + TypeScript
-- Tailwind CSS
-- Vite
-- Lucide icons
+```text
+src/
+  core/      -> models + utility functions
+  services/  -> algorithm/engine classes (logic separation)
+  App.tsx    -> UI orchestration
+```
 
-## Run locally
+## Performance-first decisions
+
+- Debounced filter processing.
+- Typed arrays for mask operations.
+- Delayed loading transitions while engines warm up.
+- Dynamic imports with fallback mode when optional libraries are unavailable.
+
+## Run
 
 ```bash
 npm install
 npm run dev
-```
-
-## Build
-
-```bash
 npm run build
-npm run preview
 ```
 
-## Notes
-
-This implementation is frontend-only, backend-free, and set up for extending into real canvas, WebGL shader passes, workers, and IndexedDB persistence.
+> If your environment blocks npm registry access, app dependencies cannot be installed until network policy is relaxed.

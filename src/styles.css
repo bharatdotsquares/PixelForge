@@ -4,8 +4,15 @@
 
 :root {
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
+  background: #020c10;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1cd6e2 #0c2732;
 }
