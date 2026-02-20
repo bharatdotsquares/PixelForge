@@ -1,38 +1,43 @@
-# PixelForge Studio – Production Frontend (React + Tailwind)
+# PixelForge Studio v2
 
-A functional, frontend-only image editor architecture with class-based engine services and a Canva-style workspace.
+Cinema-grade browser image editor foundation focused on **selection-first editing**, **shader stack architecture** (1000+ generated presets), and a **production-style non-destructive crop system**.
 
-## What is implemented
+## What changed in this iteration
 
-- **Class-based React app shell** with separated state + rendering.
-- **Magic Wand engine** (`MagicWandEngine`) flood-fill selection, threshold and feathering.
-- **Filter pipeline** (`FilterPipeline`) with stack controls and mask-aware processing.
-- **Layer system** (`LayerManager`) for DRY layer CRUD and opacity controls.
-- **Stitch module engine** (`StitchEngine`) for horizontal/vertical/smart merge logic.
-- **Collage module engine** (`CollageEngine`) with reusable grid generation.
-- **IndexedDB persistence** (`AssetStore`) for local mask/uploads.
-- **Dynamic library adapters** (`LibraryAdapters`) to warm up optional integrations:
-  - fabric / konva
-  - magic-wand-tool / image-js
-  - glfx / regl
-  - pica / interactjs
-  - face-api.js / @imgly/background-removal / tracking / jsfeat / gammacv
+- Added an advanced Crop Tool architecture:
+  - non-destructive crop state (`draft` vs `applied` crop rect)
+  - aspect presets (free, fixed ratios, social formats)
+  - rotate/zoom/flip transform controls
+  - apply/cancel/reset controls with command-history compatibility
+  - rule-of-thirds crop overlay and dimmed outside region
+- Added `CropEngine` service for crop defaults, aspect application, clamping, and layer crop attachment.
+- Preserved shader stack architecture:
+  - `ShaderStackEngine` for ordered stack operations
+  - `PresetManager` for 1000 generated presets
+  - `RenderGraph` ping-pong pass planning
+  - WGSL scaffolding in `WebGpuShaders`
 
-## Architecture
+## Architecture highlights
 
 ```text
 src/
-  core/      -> models + utility functions
-  services/  -> algorithm/engine classes (logic separation)
-  App.tsx    -> UI orchestration
+  core/
+    models.ts
+    utils.ts
+  services/
+    CropEngine.ts
+    ShaderStackEngine.ts
+    PresetManager.ts
+    RenderGraph.ts
+    WebGpuShaders.ts
+    CommandSystem.ts
+    MagicWandEngine.ts
+    ...
+  App.tsx
+  main.tsx
+public/
+  service-worker.js
 ```
-
-## Performance-first decisions
-
-- Debounced filter processing.
-- Typed arrays for mask operations.
-- Delayed loading transitions while engines warm up.
-- Dynamic imports with fallback mode when optional libraries are unavailable.
 
 ## Run
 
@@ -41,5 +46,3 @@ npm install
 npm run dev
 npm run build
 ```
-
-> If your environment blocks npm registry access, app dependencies cannot be installed until network policy is relaxed.

@@ -12,9 +12,35 @@ export class LibraryAdapters {
       this.cache.set(name, module);
       return module as T;
     } catch {
-      this.cache.set(name, null);
-      return null;
+      const globalModule = this.getGlobal(name);
+      this.cache.set(name, globalModule);
+      return (globalModule ?? null) as T | null;
     }
+  }
+
+  private static getGlobal(name: string): unknown {
+    const scope = globalThis as Record<string, unknown>;
+    const map: Record<string, string[]> = {
+      fabric: ['fabric'],
+      konva: ['Konva'],
+      'magic-wand-tool': ['MagicWand'],
+      'image-js': ['IJS', 'imagejs'],
+      glfx: ['fx'],
+      regl: ['createREGL', 'regl'],
+      pica: ['pica'],
+      interactjs: ['interact'],
+      'face-api.js': ['faceapi'],
+      '@imgly/background-removal': ['imglyRemoveBackground'],
+      tracking: ['tracking'],
+      jsfeat: ['jsfeat'],
+      gammacv: ['GammaCV', 'gammacv']
+    };
+
+    const aliases = map[name] ?? [];
+    for (const alias of aliases) {
+      if (scope[alias]) return scope[alias];
+    }
+    return null;
   }
 
   static async warmupAll(): Promise<Record<string, boolean>> {
